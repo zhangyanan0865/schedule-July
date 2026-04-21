@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Schedule 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #f4ede0;
+    --surface:  #faf6ef;
+    --card:     #fffdf9;
+    --accent:   #b5673a;
+    --accent2:  #d4884f;
+    --warm:     #e8c99a;
+    --text:     #3b2e1e;
+    --text-mid: #6b5740;
+    --text-soft:#9b8672;
+    --border:   #e0d3c0;
+    --border2:  #cec0a8;
+    --warn-bg:  #fff3eb;
+    --warn-bdr: #e8a87a;
+    --note-bg:  #f7f2e8;
+    --green:    #4e7c5f;
+    --green-bg: #edf4f0;
+    --green-bd: #b8d9c6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border2);
+    padding: 44px 60px 36px;
+  }
+  .header-eyebrow { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 500; }
+  .header-title { font-family: 'Lora', serif; font-size: 38px; font-weight: 500; color: var(--text); line-height: 1.1; margin-bottom: 4px; }
+  .header-title-cn { font-size: 15px; color: var(--text-mid); margin-bottom: 28px; font-weight: 300; }
+  .header-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { background: var(--card); border: 1px solid var(--border2); border-radius: 3px; padding: 7px 16px; font-size: 13px; color: var(--text-mid); display: flex; flex-direction: column; gap: 2px; }
+  .chip-label { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-soft); }
+  .chip-value { font-size: 14px; color: var(--text); font-weight: 500; }
+
+  .order-strip { background: var(--warm); padding: 10px 60px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-mid); border-bottom: 1px solid var(--border2); }
+  .order-strip strong { color: var(--accent); font-size: 14px; letter-spacing: 1px; }
+
+  /* ══════════════════════════════════════
+     OVERVIEW BLOCK
+  ══════════════════════════════════════ */
+  .overview-wrap {
+    background: var(--card);
+    border-bottom: 2px solid var(--border2);
+    padding: 36px 60px 40px;
+  }
+
+  .overview-title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .overview-title-en { font-family: 'Lora', serif; font-size: 20px; font-weight: 500; color: var(--accent); }
+  .overview-title-cn { font-size: 13px; color: var(--text-soft); }
+
+  /* Timeline row */
+  .timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .tl-stop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
+    flex: 1;
+    position: relative;
+  }
+
+  /* dot + line */
+  .tl-dot-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  .tl-line-left  { flex: 1; height: 2px; background: var(--border2); }
+  .tl-line-right { flex: 1; height: 2px; background: var(--border2); }
+  .tl-line-left.hidden  { background: transparent; }
+  .tl-line-right.hidden { background: transparent; }
+
+  .tl-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent2);
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .tl-dot.home {
+    background: var(--warm);
+    border-color: var(--accent2);
+  }
+
+  /* city label */
+  .tl-city-en {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.2;
+  }
+  .tl-city-cn {
+    font-size: 11px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 1px;
+    margin-bottom: 6px;
+  }
+
+  /* stay pill */
+  .tl-stay {
+    background: var(--note-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 5px;
+  }
+
+  .tl-stay.transit {
+    background: var(--warn-bg);
+    border-color: var(--warn-bdr);
+    color: var(--accent2);
+  }
+
+  /* dates below dot */
+  .tl-dates {
+    font-size: 11px;
+    color: var(--text-soft);
+    text-align: center;
+    line-height: 1.7;
+  }
+  .tl-dates strong { color: var(--text-mid); }
+
+  /* flight connector */
+  .tl-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 4px;
+    margin-top: 0;
+    flex-shrink: 0;
+  }
+
+  /* ── Schedule Table ── */
+  .schedule-table {
+    width: 100%;
+    margin-top: 32px;
+    border-collapse: collapse;
+  }
+
+  .schedule-table thead tr {
+    background: var(--note-bg);
+    border-bottom: 2px solid var(--border2);
+  }
+
+  .schedule-table th {
+    padding: 10px 16px;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .schedule-table td {
+    padding: 13px 16px;
+    font-size: 15px;
+    color: var(--text-mid);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .schedule-table tr:last-child td { border-bottom: none; }
+
+  .schedule-table tr:hover td { background: var(--note-bg); }
+
+  .td-date {
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    font-size: 14px;
+  }
+
+  .td-date-cn { font-size: 11px; color: var(--text-soft); font-weight: 400; display: block; margin-top: 2px; }
+
+  .td-event { font-weight: 500; color: var(--text); }
+  .td-event-cn { font-size: 12px; color: var(--text-soft); display: block; margin-top: 2px; line-height: 1.5; }
+
+  .td-stay { white-space: nowrap; }
+
+  .stay-pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .stay-pill.green { background: var(--green-bg); border: 1px solid var(--green-bd); color: var(--green); }
+  .stay-pill.amber { background: var(--warn-bg); border: 1px solid var(--warn-bdr); color: var(--accent2); }
+  .stay-pill.long  { background: #f0eaf8; border: 1px solid #c9b8e4; color: #6b4fa0; }
+
+  .event-icon { margin-right: 6px; }
+
+  /* ── MAIN ── */
+  .main { padding: 36px 60px 60px; max-width: 1000px; }
+
+  .section-head { display: flex; align-items: baseline; gap: 14px; margin-top: 36px; margin-bottom: 20px; }
+  .section-en { font-family: 'Lora', serif; font-size: 22px; font-weight: 500; color: var(--accent); }
+  .section-cn { font-size: 13px; color: var(--text-soft); }
+  .section-rule { flex: 1; height: 1px; background: linear-gradient(to right, var(--border2), transparent); }
+
+  /* ── FLIGHT CARD ── */
+  .flight-group { margin-bottom: 24px; }
+  .flight-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px 4px 0 0; padding: 26px 30px 20px; }
+  .flight-row { display: grid; grid-template-columns: 1fr 160px 1fr; align-items: center; gap: 12px; }
+  .iata { font-family: 'Lora', serif; font-size: 40px; font-weight: 500; color: var(--text); letter-spacing: 2px; line-height: 1; }
+  .airport-en { font-size: 13px; color: var(--text-mid); margin-top: 4px; }
+  .terminal-tag { display: inline-block; background: var(--note-bg); border: 1px solid var(--border); border-radius: 2px; font-size: 11px; color: var(--text-soft); padding: 2px 8px; margin-top: 5px; }
+  .time-big { font-size: 28px; font-weight: 600; color: var(--text); margin-top: 10px; letter-spacing: 1px; }
+  .date-small { font-size: 12px; color: var(--text-soft); margin-top: 3px; }
+  .right-align { text-align: right; }
+  .flight-mid { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .flight-no { font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: 2px; background: var(--warn-bg); padding: 4px 12px; border-radius: 2px; border: 1px solid var(--warm); }
+  .arrow-line { display: flex; align-items: center; width: 100%; gap: 4px; }
+  .arr-dash { flex: 1; height: 1px; background: var(--border2); }
+  .arr-plane { font-size: 16px; color: var(--accent2); }
+  .duration-tag { font-size: 12px; color: var(--text-soft); }
+  .meta-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border); }
+  .meta-item-sm { font-size: 13px; color: var(--text-soft); }
+  .meta-item-sm strong { color: var(--text-mid); font-weight: 600; }
+
+  .transfer-bar { background: var(--note-bg); border: 1px solid var(--border); border-top: none; border-bottom: none; padding: 12px 30px; display: flex; align-items: flex-start; gap: 12px; }
+  .transfer-bar.warn { background: var(--warn-bg); border-color: var(--warn-bdr); }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent2); margin-top: 4px; flex-shrink: 0; }
+  .t-dot.warn { background: var(--accent); }
+  .t-text { font-size: 14px; color: var(--text-mid); line-height: 1.5; }
+  .t-text strong { color: var(--accent); }
+  .warn-txt { color: var(--accent); font-weight: 600; }
+
+  .notes-card { background: var(--note-bg); border: 1px solid var(--border); border-top: 2px solid var(--accent2); border-radius: 0 0 4px 4px; padding: 18px 30px 20px; }
+  .notes-card.alert-card { border-top-color: var(--accent); background: var(--warn-bg); }
+  .notes-title { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; font-weight: 600; }
+  .notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 30px; }
+  .note-item { display: flex; flex-direction: column; gap: 2px; }
+  .note-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-soft); }
+  .note-en { font-size: 15px; color: var(--text); font-weight: 500; line-height: 1.4; }
+  .note-cn { font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+  .badge-good { display: inline-block; background: var(--green-bg); border: 1px solid var(--green-bd); border-radius: 2px; font-size: 11px; color: var(--green); padding: 2px 8px; margin-top: 3px; }
+  .badge-warn { display: inline-block; background: var(--warn-bg); border: 1px solid var(--warn-bdr); border-radius: 2px; font-size: 11px; color: var(--accent); padding: 2px 8px; margin-top: 3px; }
+  .note-divider { grid-column: 1 / -1; height: 1px; background: var(--border); margin: 4px 0; }
+
+  .footer { border-top: 1px solid var(--border2); padding: 18px 60px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-soft); background: var(--surface); }
+  .page-tag { color: var(--accent); font-weight: 600; letter-spacing: 1px; }
+
+  @media (max-width: 680px) {
+    .header, .main, .footer, .order-strip, .overview-wrap { padding-left: 20px; padding-right: 20px; }
+    .flight-row { grid-template-columns: 1fr 100px 1fr; }
+    .iata { font-size: 28px; }
+    .time-big { font-size: 22px; }
+    .notes-grid { grid-template-columns: 1fr; }
+    .timeline { gap: 0; }
+    .tl-stop { min-width: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-eyebrow">Ghent University · 2026 Conference Travel</div>
+  <div class="header-title">Flight Schedule</div>
+  <div class="header-title-cn">航班行程安排 · 2026 FFW &amp; NME 会议</div>
+  <div class="header-chips">
+    <div class="chip"><span class="chip-label">Carrier / 承运航空</span><span class="chip-value">Air China 中国国际航空</span></div>
+    <div class="chip"><span class="chip-label">Destinations / 目的地</span><span class="chip-value">Chengdu · Osaka · Tokyo</span></div>
+    <div class="chip"><span class="chip-label">Departure / 出发</span><span class="chip-value">09 Jul 2026</span></div>
+    <div class="chip"><span class="chip-label">Return / 返程</span><span class="chip-value">04 Aug 2026</span></div>
+  </div>
+</div>
+<div class="order-strip">
+  📋 Order No. / 订单号：<strong>4205504894</strong> &nbsp;·&nbsp; Ghent University / 根特大学
+</div>
+
+<!-- ══════════════════════════════════════
+     OVERVIEW BLOCK
+══════════════════════════════════════ -->
+<div class="overview-wrap">
+  <div class="overview-title">
+    <div class="overview-title-en">Journey Overview</div>
+    <div class="overview-title-cn">行程概览</div>
+  </div>
+
+  <!-- Visual Timeline -->
+  <div class="timeline">
+
+    <!-- Brussels -->
+    <div class="tl-stop">
+      <div class="tl-dot-row">
+        <div class="tl-line-left hidden"></div>
+        <div class="tl-dot home"></div>
+        <div class="tl-line-right"></div>
+      </div>
+      <div class="tl-city-en">Brussels</div>
+      <div class="tl-city-cn">布鲁塞尔</div>
+      <div class="tl-stay transit">Home Base</div>
+      <div class="tl-dates">Depart<br><strong>09 Jul 13:25</strong></div>
+    </div>
+
+    <!-- Chengdu -->
+    <div class="tl-stop">
+      <div class="tl-dot-row">
+        <div class="tl-line-left"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-line-right"></div>
+      </div>
+      <div class="tl-city-en">Chengdu</div>
+      <div class="tl-city-cn">成都（第一程）</div>
+      <div class="tl-stay green">3 nights · 3晚</div>
+      <div class="tl-dates">Arrive <strong>10 Jul 05:45</strong><br>Depart <strong>13 Jul 11:45</strong></div>
+    </div>
+
+    <!-- Osaka -->
+    <div class="tl-stop">
+      <div class="tl-dot-row">
+        <div class="tl-line-left"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-line-right"></div>
+      </div>
+      <div class="tl-city-en">Osaka</div>
+      <div class="tl-city-cn">大阪</div>
+      <div class="tl-stay amber">Japan Stay · 日本行</div>
+      <div class="tl-dates">Arrive <strong>13 Jul 20:30</strong><br>→ onward to Tokyo</div>
+    </div>
+
+    <!-- Tokyo -->
+    <div class="tl-stop">
+      <div class="tl-dot-row">
+        <div class="tl-line-left"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-line-right"></div>
+      </div>
+      <div class="tl-city-en">Tokyo</div>
+      <div class="tl-city-cn">东京</div>
+      <div class="tl-stay amber">13 nights total · 日本共13晚</div>
+      <div class="tl-dates">Depart <strong>26 Jul 14:00</strong><br>from HND T3</div>
+    </div>
+
+    <!-- Chengdu 2 -->
+    <div class="tl-stop">
+      <div class="tl-dot-row">
+        <div class="tl-line-left"></div>
+        <div class="tl-dot"></div>
+        <div class="tl-line-right"></div>
+      </div>
+      <div class="tl-city-en">Chengdu</div>
+      <div class="tl-city-cn">成都（第二程）</div>
+      <div class="tl-stay long">9 nights · 9晚</div>
+      <div class="tl-dates">Arrive <strong>26 Jul 21:30</strong><br>Depart <strong>04 Aug 01:55</strong></div>
+    </div>
+
+    <!-- Brussels return -->
+    <div class="tl-stop">
+      <div class="tl-dot-row">
+        <div class="tl-line-left"></div>
+        <div class="tl-dot home"></div>
+        <div class="tl-line-right hidden"></div>
+      </div>
+      <div class="tl-city-en">Brussels</div>
+      <div class="tl-city-cn">布鲁塞尔</div>
+      <div class="tl-stay transit">Home Base</div>
+      <div class="tl-dates">Arrive<br><strong>04 Aug 06:50</strong></div>
+    </div>
+
+  </div>
+
+  <!-- Schedule Table -->
+  <table class="schedule-table">
+    <thead>
+      <tr>
+        <th>Date / 日期</th>
+        <th>Event / 事件</th>
+        <th>Location / 地点</th>
+        <th>Stay / 停留</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="td-date">Thu 09 Jul<span class="td-date-cn">7月9日 周四</span></td>
+        <td><span class="td-event"><span class="event-icon">✈</span>Depart Brussels (13:25) · CA464</span><span class="td-event-cn">下午从布鲁塞尔出发，乘国航CA464，夜间飞行</span></td>
+        <td>BRU → TFU</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="td-date">Fri 10 Jul<span class="td-date-cn">7月10日 周五</span></td>
+        <td><span class="td-event"><span class="event-icon">🛬</span>Arrive Chengdu Tianfu (05:45)</span><span class="td-event-cn">清晨抵达成都天府机场T1，开始成都停留</span></td>
+        <td>Chengdu · 成都</td>
+        <td><span class="stay-pill green">3 nights · 3晚</span></td>
+      </tr>
+      <tr>
+        <td class="td-date">Mon 13 Jul<span class="td-date-cn">7月13日 周一</span></td>
+        <td><span class="td-event"><span class="event-icon">✈</span>Depart Chengdu Shuangliu (11:45) · CA1406 + CA161</span><span class="td-event-cn">上午从双流机场T2出发，经北京转机（2h05m），晚抵大阪关西机场</span></td>
+        <td>CTU → PEK → KIX</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="td-date">Mon 13 Jul<span class="td-date-cn">7月13日 周一</span></td>
+        <td><span class="td-event"><span class="event-icon">🛬</span>Arrive Osaka Kansai (20:30)</span><span class="td-event-cn">晚间抵达大阪关西机场T1，开始日本行程</span></td>
+        <td>Osaka · 大阪</td>
+        <td><span class="stay-pill amber">Japan · 日本 13晚</span></td>
+      </tr>
+      <tr>
+        <td class="td-date">Sun 26 Jul<span class="td-date-cn">7月26日 周日</span></td>
+        <td><span class="td-event"><span class="event-icon">✈</span>Depart Tokyo Haneda (14:00) · CA182 + CA4104</span><span class="td-event-cn">下午从羽田机场T3出发，经北京转机（仅1h30m，转机时间短），晚抵成都双流</span></td>
+        <td>HND → PEK → CTU</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="td-date">Sun 26 Jul<span class="td-date-cn">7月26日 周日</span></td>
+        <td><span class="td-event"><span class="event-icon">🛬</span>Arrive Chengdu Shuangliu (21:30)</span><span class="td-event-cn">晚间抵达成都双流机场T2，开始第二段成都停留</span></td>
+        <td>Chengdu · 成都</td>
+        <td><span class="stay-pill long">9 nights · 9晚</span></td>
+      </tr>
+      <tr>
+        <td class="td-date">Mon 03 Aug<span class="td-date-cn">8月3日 周一</span></td>
+        <td><span class="td-event"><span class="event-icon">⚠</span>Head to Tianfu Airport (by late evening)</span><span class="td-event-cn">⚠ 航班于次日凌晨01:55起飞，须于8月3日晚间出发前往天府机场T1，建议23:00前抵达</span></td>
+        <td>TFU T1 · 天府机场</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="td-date">Tue 04 Aug<span class="td-date-cn">8月4日 周二</span></td>
+        <td><span class="td-event"><span class="event-icon">✈</span>Depart Chengdu Tianfu (01:55) · CA463</span><span class="td-event-cn">凌晨从天府机场T1出发返回比利时，乘国航CA463</span></td>
+        <td>TFU → BRU</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td class="td-date">Tue 04 Aug<span class="td-date-cn">8月4日 周二</span></td>
+        <td><span class="td-event"><span class="event-icon">🏠</span>Arrive Brussels (06:50)</span><span class="td-event-cn">清晨抵达布鲁塞尔国家机场，行程结束 · Total trip: 26 days · 全程26天</span></td>
+        <td>Brussels · 布鲁塞尔</td>
+        <td><span class="stay-pill green">Trip ends · 旅程结束</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- ══ OUTBOUND ══ -->
+  <div class="section-head">
+    <div class="section-en">Outbound</div>
+    <div class="section-cn">去程</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <!-- Leg 1: BRU → TFU -->
+  <div class="flight-group">
+    <div class="flight-card">
+      <div class="flight-row">
+        <div>
+          <div class="iata">BRU</div>
+          <div class="airport-en">Brussels National Airport</div>
+          <div class="terminal-tag">No terminal assigned</div>
+          <div class="time-big">13:25</div>
+          <div class="date-small">THU · 09 JUL 2026 · 周四</div>
+        </div>
+        <div class="flight-mid">
+          <div class="flight-no">CA464</div>
+          <div class="arrow-line"><div class="arr-dash"></div><div class="arr-plane">✈</div><div class="arr-dash"></div></div>
+          <div class="duration-tag">10h 20m</div>
+        </div>
+        <div class="right-align">
+          <div class="iata">TFU</div>
+          <div class="airport-en">Chengdu Tianfu Intl. Airport</div>
+          <div class="terminal-tag">Terminal 1</div>
+          <div class="time-big">05:45</div>
+          <div class="date-small">FRI · 10 JUL 2026 · 周五（次日）</div>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-item-sm">✈ Aircraft / 机型：<strong>Airbus A330</strong></div>
+        <div class="meta-item-sm">🧳 Baggage / 行李：<strong>1 Piece Hold · 1件托运</strong></div>
+        <div class="meta-item-sm">🎫 Fare / 舱型：<strong>Economy Standard</strong></div>
+        <div class="meta-item-sm">📌 Shared with Qiqi · 与Qiqi同乘</div>
+      </div>
+    </div>
+    <div class="notes-card">
+      <div class="notes-title">✦ Notes &amp; Remarks · 备注说明</div>
+      <div class="notes-grid">
+        <div class="note-item">
+          <div class="note-label">Departure Airport</div>
+          <div class="note-en">Brussels National Airport (BRU)</div>
+          <div class="note-cn">布鲁塞尔国家机场，位于比利时首都布鲁塞尔东北约12公里，是比利时最大的国际机场。</div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">Arrival Airport</div>
+          <div class="note-en">Chengdu Tianfu International Airport (TFU)</div>
+          <div class="note-cn">成都天府国际机场，位于成都市区东南约51公里，距市中心车程约50–70分钟。</div>
+        </div>
+        <div class="note-divider"></div>
+        <div class="note-item">
+          <div class="note-label">⚠ Airport Switch Warning</div>
+          <div class="note-en">Arrival: TFU (Tianfu) · Next departure: CTU (Shuangliu)</div>
+          <div class="note-cn">⚠ 抵达天府机场(TFU)，但7月13日须从双流机场(CTU)出发，两机场相距约60公里，请提前安排交通，建议预留90分钟以上转场时间。</div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">Baggage</div>
+          <div class="note-en">1 checked bag · Economy Standard · direct flight</div>
+          <div class="note-cn">直飞航班，1件托运行李，无需转机，行李随机直达成都天府。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leg 2: CTU → KIX via PEK -->
+  <div class="flight-group">
+    <div class="flight-card">
+      <div class="flight-row">
+        <div>
+          <div class="iata">CTU</div>
+          <div class="airport-en">Chengdu Shuangliu Intl. Airport</div>
+          <div class="terminal-tag">Terminal 2</div>
+          <div class="time-big">11:45</div>
+          <div class="date-small">MON · 13 JUL 2026 · 周一</div>
+        </div>
+        <div class="flight-mid">
+          <div class="flight-no">CA1406</div>
+          <div class="arrow-line"><div class="arr-dash"></div><div class="arr-plane">✈</div><div class="arr-dash"></div></div>
+          <div class="duration-tag">2h 40m</div>
+        </div>
+        <div class="right-align">
+          <div class="iata">PEK</div>
+          <div class="airport-en">Beijing Capital Intl. Airport</div>
+          <div class="terminal-tag">Terminal 3</div>
+          <div class="time-big">14:25</div>
+          <div class="date-small">MON · 13 JUL 2026 · 周一</div>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-item-sm">✈ Aircraft / 机型：<strong>Airbus A330</strong></div>
+        <div class="meta-item-sm">🧳 Baggage / 行李：<strong>2 Pieces Hold · 2件托运</strong></div>
+        <div class="meta-item-sm">🎫 Fare / 舱型：<strong>Economy Flex</strong></div>
+        <div class="meta-item-sm">📌 Shared with Qiqi · 与Qiqi同乘</div>
+      </div>
+    </div>
+    <div class="transfer-bar">
+      <div class="t-dot"></div>
+      <div class="t-text"><strong>Transfer at Beijing Capital T3 · 北京首都机场T3转机</strong><br>
+      Layover: 2h 05m · 候机2小时05分 &nbsp;·&nbsp;
+      <span style="color:var(--green); font-weight:600;">✓ Baggage checked through to Osaka · 行李直挂至大阪，无需取行李</span></div>
+    </div>
+    <div class="flight-card" style="border-top:none; border-radius:0;">
+      <div class="flight-row">
+        <div>
+          <div class="iata">PEK</div>
+          <div class="airport-en">Beijing Capital Intl. Airport</div>
+          <div class="terminal-tag">Terminal 3</div>
+          <div class="time-big">16:30</div>
+          <div class="date-small">MON · 13 JUL 2026 · 周一</div>
+        </div>
+        <div class="flight-mid">
+          <div class="flight-no">CA161</div>
+          <div class="arrow-line"><div class="arr-dash"></div><div class="arr-plane">✈</div><div class="arr-dash"></div></div>
+          <div class="duration-tag">3h 00m</div>
+        </div>
+        <div class="right-align">
+          <div class="iata">KIX</div>
+          <div class="airport-en">Osaka Kansai Intl. Airport</div>
+          <div class="terminal-tag">Terminal 1</div>
+          <div class="time-big">20:30</div>
+          <div class="date-small">MON · 13 JUL 2026 · 周一</div>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-item-sm">✈ Aircraft / 机型：<strong>Airbus A321</strong></div>
+        <div class="meta-item-sm">🧳 Baggage / 行李：<strong>2 Pieces Hold · 2件托运</strong></div>
+        <div class="meta-item-sm">🎫 Fare / 舱型：<strong>Economy Flex</strong></div>
+        <div class="meta-item-sm">📌 Shared with Qiqi · 与Qiqi同乘</div>
+      </div>
+    </div>
+    <div class="notes-card">
+      <div class="notes-title">✦ Notes &amp; Remarks · 备注说明</div>
+      <div class="notes-grid">
+        <div class="note-item">
+          <div class="note-label">Departure Airport</div>
+          <div class="note-en">Chengdu Shuangliu Intl. (CTU) T2</div>
+          <div class="note-cn">成都双流国际机场T2，位于成都市区西南约16公里。⚠ 注意与天府机场(TFU)是不同的机场，请勿走错。</div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">Arrival Airport</div>
+          <div class="note-en">Osaka Kansai Intl. (KIX) T1</div>
+          <div class="note-cn">大阪关西国际机场，位于大阪湾人工岛，距市区约50公里，可乘特急列车（约75分钟）或机场大巴前往市区。</div>
+        </div>
+        <div class="note-divider"></div>
+        <div class="note-item">
+          <div class="note-label">Transfer &amp; Baggage</div>
+          <div class="note-en">Beijing T3 · 2h 05m · Checked through</div>
+          <div class="note-cn">北京转机时间充裕，同在T3内完成，行李直挂至大阪，无需领取及重新托运。</div>
+          <div style="margin-top:6px;"><span class="badge-good">✓ Through-check confirmed · 行李直挂已确认</span></div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">Baggage Allowance</div>
+          <div class="note-en">2 checked bags · Economy Flex</div>
+          <div class="note-cn">弹性票，允许2件托运行李；变更手续费€63（需补差价），较标准票灵活。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RETURN ══ -->
+  <div class="section-head">
+    <div class="section-en">Return</div>
+    <div class="section-cn">回程</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <!-- Leg 3: HND → CTU via PEK -->
+  <div class="flight-group">
+    <div class="flight-card">
+      <div class="flight-row">
+        <div>
+          <div class="iata">HND</div>
+          <div class="airport-en">Tokyo Haneda Airport</div>
+          <div class="terminal-tag">Terminal 3</div>
+          <div class="time-big">14:00</div>
+          <div class="date-small">SUN · 26 JUL 2026 · 周日</div>
+        </div>
+        <div class="flight-mid">
+          <div class="flight-no">CA182</div>
+          <div class="arrow-line"><div class="arr-dash"></div><div class="arr-plane">✈</div><div class="arr-dash"></div></div>
+          <div class="duration-tag">4h 00m</div>
+        </div>
+        <div class="right-align">
+          <div class="iata">PEK</div>
+          <div class="airport-en">Beijing Capital Intl. Airport</div>
+          <div class="terminal-tag">Terminal 3</div>
+          <div class="time-big">17:00</div>
+          <div class="date-small">SUN · 26 JUL 2026 · 周日</div>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-item-sm">✈ Aircraft / 机型：<strong>Airbus A321</strong></div>
+        <div class="meta-item-sm">🧳 Baggage / 行李：<strong>2 Pieces Hold · 2件托运</strong></div>
+        <div class="meta-item-sm">🎫 Fare / 舱型：<strong>Economy Flex</strong></div>
+        <div class="meta-item-sm">📌 Shared with Qiqi · 与Qiqi同乘</div>
+      </div>
+    </div>
+    <div class="transfer-bar warn">
+      <div class="t-dot warn"></div>
+      <div class="t-text"><strong>Transfer at Beijing Capital T3 · 北京首都机场T3转机</strong><br>
+      Layover: <span class="warn-txt">⚠ Only 1h 30m — Short transfer / 仅1小时30分，转机时间偏短！下机后请立即前往登机口</span>
+      &nbsp;·&nbsp; <span style="color:var(--green); font-weight:600;">✓ Baggage checked through · 行李直挂</span></div>
+    </div>
+    <div class="flight-card" style="border-top:none; border-radius:0;">
+      <div class="flight-row">
+        <div>
+          <div class="iata">PEK</div>
+          <div class="airport-en">Beijing Capital Intl. Airport</div>
+          <div class="terminal-tag">Terminal 3</div>
+          <div class="time-big">18:30</div>
+          <div class="date-small">SUN · 26 JUL 2026 · 周日</div>
+        </div>
+        <div class="flight-mid">
+          <div class="flight-no">CA4104</div>
+          <div class="arrow-line"><div class="arr-dash"></div><div class="arr-plane">✈</div><div class="arr-dash"></div></div>
+          <div class="duration-tag">3h 00m</div>
+        </div>
+        <div class="right-align">
+          <div class="iata">CTU</div>
+          <div class="airport-en">Chengdu Shuangliu Intl. Airport</div>
+          <div class="terminal-tag">Terminal 2</div>
+          <div class="time-big">21:30</div>
+          <div class="date-small">SUN · 26 JUL 2026 · 周日</div>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-item-sm">✈ Aircraft / 机型：<strong>Airbus A330</strong></div>
+        <div class="meta-item-sm">🧳 Baggage / 行李：<strong>2 Pieces Hold · 2件托运</strong></div>
+        <div class="meta-item-sm">🎫 Fare / 舱型：<strong>Economy Flex</strong></div>
+        <div class="meta-item-sm">📌 Shared with Qiqi · 与Qiqi同乘</div>
+      </div>
+    </div>
+    <div class="notes-card alert-card">
+      <div class="notes-title">✦ Notes &amp; Remarks · 备注说明</div>
+      <div class="notes-grid">
+        <div class="note-item">
+          <div class="note-label">Departure Airport</div>
+          <div class="note-en">Tokyo Haneda (HND) T3 · International</div>
+          <div class="note-cn">东京羽田机场T3（国际航站楼），距市区约14公里，可乘单轨约20分钟至浜松町，或乘京急线至品川。</div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">⚠ Short Transfer</div>
+          <div class="note-en">Beijing T3 — 1h 30m only · Move quickly</div>
+          <div class="note-cn">⚠ 北京中转仅1小时30分，系统标记为"转机时间短"。下机后切勿逗留，立即前往登机口。行李直挂至成都，不受影响。</div>
+          <div style="margin-top:6px;"><span class="badge-warn">⚠ Short transfer · 转机时间偏短，请加快步伐</span></div>
+        </div>
+        <div class="note-divider"></div>
+        <div class="note-item">
+          <div class="note-label">Arrival Airport</div>
+          <div class="note-en">Chengdu Shuangliu (CTU) T2</div>
+          <div class="note-cn">抵达成都双流T2，注意8月4日出发是从天府机场(TFU)，两者不同，如有行程需注意机场切换。</div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">Baggage</div>
+          <div class="note-en">2 bags · Checked through to CTU</div>
+          <div class="note-cn">行李全程直挂至成都，无需在北京提取。</div>
+          <div style="margin-top:6px;"><span class="badge-good">✓ Through-check confirmed · 行李直挂已确认</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leg 4: TFU → BRU -->
+  <div class="flight-group">
+    <div class="flight-card">
+      <div class="flight-row">
+        <div>
+          <div class="iata">TFU</div>
+          <div class="airport-en">Chengdu Tianfu Intl. Airport</div>
+          <div class="terminal-tag">Terminal 1</div>
+          <div class="time-big">01:55</div>
+          <div class="date-small">TUE · 04 AUG 2026 · 周二（凌晨）</div>
+        </div>
+        <div class="flight-mid">
+          <div class="flight-no">CA463</div>
+          <div class="arrow-line"><div class="arr-dash"></div><div class="arr-plane">✈</div><div class="arr-dash"></div></div>
+          <div class="duration-tag">10h 55m</div>
+        </div>
+        <div class="right-align">
+          <div class="iata">BRU</div>
+          <div class="airport-en">Brussels National Airport</div>
+          <div class="terminal-tag">No terminal assigned</div>
+          <div class="time-big">06:50</div>
+          <div class="date-small">TUE · 04 AUG 2026 · 周二</div>
+        </div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-item-sm">✈ Aircraft / 机型：<strong>Airbus A330</strong></div>
+        <div class="meta-item-sm">🧳 Baggage / 行李：<strong>1 Piece Hold · 1件托运</strong></div>
+        <div class="meta-item-sm">🎫 Fare / 舱型：<strong>Economy Standard</strong></div>
+        <div class="meta-item-sm">⚡ Qiqi returns 09 Aug · Qiqi 8月9日同航班返回</div>
+      </div>
+    </div>
+    <div class="notes-card alert-card">
+      <div class="notes-title">✦ Notes &amp; Remarks · 备注说明</div>
+      <div class="notes-grid">
+        <div class="note-item">
+          <div class="note-label">⚠ Departure Time Alert</div>
+          <div class="note-en">01:55 AM departure — arrive airport by Mon 03 Aug</div>
+          <div class="note-cn">⚠ 航班于8月4日凌晨01:55起飞，须于8月3日（周一）晚间抵达天府机场T1，建议不晚于23:00前完成值机手续。</div>
+          <div style="margin-top:6px;"><span class="badge-warn">⚠ Head to TFU on Mon 03 Aug evening · 须8月3日晚到场</span></div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">Airport</div>
+          <div class="note-en">Chengdu Tianfu (TFU) T1 · ~51km from city</div>
+          <div class="note-cn">天府机场距市区约51公里，深夜出租车约50–70分钟，建议提前确认交通，或于8月3日入住机场附近酒店。</div>
+        </div>
+        <div class="note-divider"></div>
+        <div class="note-item">
+          <div class="note-label">Return Date Note</div>
+          <div class="note-en">Your return: 04 Aug · Qiqi's return: 09 Aug</div>
+          <div class="note-cn">您与Qiqi乘坐相同航班号CA463，但日期不同。您8月4日返回，Qiqi 8月9日返回，其余所有航段均相同。</div>
+        </div>
+        <div class="note-item">
+          <div class="note-label">Baggage</div>
+          <div class="note-en">1 checked bag · Economy Standard</div>
+          <div class="note-cn">标准票仅限1件托运行李（少于中间段的2件），请注意行李规划，避免超额。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>Ghent University · 2026 FFW &amp; NME Conference Travel · Air China</div>
+  <div class="page-tag">PAGE 01 / —</div>
+</div>
+
+</body>
+</html>
